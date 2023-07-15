@@ -64,6 +64,8 @@ namespace LojaWeb.Controllers
             return Ok(mensagem);
         }
 
+        [Route("/home/imc")]
+        [HttpGet]
         public IActionResult DadosImc()
         {
             return View();
