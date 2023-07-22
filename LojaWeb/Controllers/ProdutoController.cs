@@ -1,4 +1,5 @@
-﻿using LojaRepositorios.Entidades;
+﻿using LojaRepositorios.DataBase;
+using LojaRepositorios.Entidades;
 using LojaServicos.Servicos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,11 @@ namespace LojaWeb.Controllers
 
     public class ProdutoController : Controller
     {
+        public ProdutoController(LojaContexto contexto)
+        {
+            var produtos = contexto.Set<Produto>().ToList();
+        }
+
         [HttpGet]
         public IActionResult Index()
         {

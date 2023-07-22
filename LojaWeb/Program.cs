@@ -1,7 +1,14 @@
+using LojaRepositorios.DataBase;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+var connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\73368\\source\\repos\\AspNetCore\\Repositorios\\DataBase\\WindowsFormsBancoDados.mdf;Integrated Security=True";
+
+builder.Services.AddDbContext<LojaContexto>(options => options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
