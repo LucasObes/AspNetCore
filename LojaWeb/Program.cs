@@ -1,4 +1,6 @@
 using LojaRepositorios.DataBase;
+using LojaRepositorios.Repositorios;
+using LojaServicos.Servicos;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,9 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-var connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\73368\\source\\repos\\AspNetCore\\Repositorios\\DataBase\\WindowsFormsBancoDados.mdf;Integrated Security=True";
-
+var connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\73368\Source\Repos\proway-curso-c-sharp\WindowsFormsExemplos\BancoDados\WindowsFormsBancoDados.mdf;Integrated Security=True";
 builder.Services.AddDbContext<LojaContexto>(options => options.UseSqlServer(connectionString));
+
+// Adicionar as classes concretas com suas interfaces na injeção de dependência (interface, dependencia)
+builder.Services.AddScoped<IProdutoServico, ProdutoServico>();
+builder.Services.AddScoped<IProdutoRepositorio, ProdutoRepositorio>();
+
+builder.Services.AddScoped<IClienteServico, ClienteServico>();
+builder.Services.AddScoped<IClienteRepositorio, ClienteRepositorio>();
 
 var app = builder.Build();
 

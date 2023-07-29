@@ -8,12 +8,19 @@ namespace LojaWeb.Controllers
 
     public class ClienteController : Controller
     {
-        [HttpGet]
-        public IActionResult Index()
+        private readonly IClienteServico _clienteServico;
+
+        public ClienteController(IClienteServico clienteServico)
         {
-            var clienteServico = new ClienteServico();
-            var clientes = clienteServico.ObterTodos();
+            _clienteServico = clienteServico;
+        }
+
+        [HttpGet]
+        public IActionResult Index([FromQuery] string? pesquisa) // cliente?pesquisa=OQUEQUEROPESQUISAR
+        {
+            var clientes = _clienteServico.ObterTodos(pesquisa);
             ViewBag.Clientes = clientes;
+            ViewBag.Pesquisa = pesquisa;
 
             return View();
         }
@@ -33,20 +40,30 @@ namespace LojaWeb.Controllers
             [FromForm] DateTime dataNascimento,
             [FromForm] string cidade,
             [FromForm] string estado,
-            [FromForm] string cep
+            [FromForm] string cep,
+            [FromForm] string bairro,
+            [FromForm] string logradouro,
+            [FromForm] string numero,
+            [FromForm] string? complemento
             )
         {
-            var clienteServico = new ClienteServico();
 
             var cliente = new Cliente();
             cliente.Nome = nome;
             cliente.Cpf = cpf;
             cliente.DataNascimento = dataNascimento;
+
+            cliente.Endereco = new Endereco();
             cliente.Endereco.Cidade = cidade;
             cliente.Endereco.Estado = estado;
             cliente.Endereco.Cep = cep;
+            cliente.Endereco.Bairro = bairro;
+            cliente.Endereco.Logradouro = logradouro;
+            cliente.Endereco.Numero = numero;
+            cliente.Endereco.Complemento = complemento;
 
-            clienteServico.Cadastrar(cliente);
+
+            _clienteServico.Cadastrar(cliente);
 
             return RedirectToAction("Index");
         }

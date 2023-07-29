@@ -1,83 +1,66 @@
 ﻿using LojaRepositorios.DataBase;
 using LojaRepositorios.Entidades;
+using LojaRepositorios.ExtensionsMethods;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 
 namespace LojaRepositorios.Repositorios
 {
-    public class ClienteRepositorio
+    public class ClienteRepositorio : IClienteRepositorio
     {
-        private readonly BancoDadosConexao _bancoDadosConexao;
+        private readonly LojaContexto _lojaContexto;
+        private readonly DbSet<Cliente> _dbset;
 
-        public ClienteRepositorio()
+        public ClienteRepositorio(LojaContexto lojaContexto)
         {
-            _bancoDadosConexao = new BancoDadosConexao();
+            _lojaContexto = lojaContexto;
+            _dbset = _lojaContexto.Set<Cliente>();
         }
 
         public void Cadastrar(Cliente cliente)
         {
-            var comando = _bancoDadosConexao.Conectar();
+            _dbset.Add(cliente);
+            _lojaContexto.SaveChanges();
+        }
 
-            comando.CommandText = @"INSERT INTO clientes 
-                (nome,  cpf,  data_nascimento,  estado,  cidade,  bairro,  cep,  
-                logradouro,  numero,  complemento)
-            VALUES 
-                (@NOME, @CPF, @DATA_NASCIMENTO, @ESTADO, @CIDADE, @BAIRRO, @CEP, 
-                @LOGRADOURO, @NUMERO, @COMPLEMENTO)";
+        public void Editar (Cliente cliente)
+        {
+            _dbset.Update(cliente);
+            _lojaContexto.SaveChanges();
+        }
 
-            comando.Parameters.AddWithValue("@NOME", cliente.Nome);
-            comando.Parameters.AddWithValue("@CPF", cliente.Cpf);
-            comando.Parameters.AddWithValue("@DATA_NASCIMENTO", cliente.DataNascimento);
-            comando.Parameters.AddWithValue("@ESTADO", cliente.Endereco.Estado);
-            comando.Parameters.AddWithValue("@CIDADE", cliente.Endereco.Cidade);
-            comando.Parameters.AddWithValue("@BAIRRO", cliente.Endereco.Bairro);
-            comando.Parameters.AddWithValue("@CEP", cliente.Endereco.Cep);
-            comando.Parameters.AddWithValue("@LOGRADOURO", cliente.Endereco.Logradouro);
-            comando.Parameters.AddWithValue("@NUMERO", cliente.Endereco.Numero);
-            comando.Parameters.AddWithValue("@COMPLEMENTO", cliente.Endereco.Complemento);
+        public void Apagar (int id)
+        {
+            var cliente = _dbset.FirstOrDefault(x => x.Id == id);
 
-            comando.ExecuteNonQuery();
+            if(cliente == null)
+            {
+                throw new Exception($"O cliente com código {id} que deseja excluir não existe");
+            }
+
+            _dbset.Remove(cliente);
+            _lojaContexto.SaveChanges();
         }
 
         // Listagem de clientes (criar a lista com o método de ObterTodos() para todos os clientes serem listados no DataGridView utilizando o banco de dados
-        public List<Cliente> ObterTodos()
+        public List<Cliente> ObterTodos(string? pesquisa)
         {
-            var bancoDadosConexao = new BancoDadosConexao();
-            var comando = bancoDadosConexao.Conectar();
-            comando.CommandText = "SELECT * FROM clientes";
-
-            var tabelaEmMemoria = new DataTable();
-            tabelaEmMemoria.Load(comando.ExecuteReader());
-
-            var clientes = new List<Cliente>();
-
-            /*
-            for (var i = 0; i < tabelaEmMemoria.Rows.Count; i++)
+            var query = _dbset.AsQueryable();
+            
+            if(pesquisa != null && pesquisa.Trim() != "")
             {
-                // obter da lista de registros um registro em determinada posição (iterando a lista)
-                var registro = tabelaEmMemoria.Rows[i];
-            }
-            */
+                query = query.Where(
+                x => x.Nome.Contains(pesquisa) ||
+                x.Cpf.Replace("-", "").Replace(".", "") == pesquisa.ObterCpfLimpo());
+			}
 
-            foreach (DataRow registro in tabelaEmMemoria.Rows)
-            {
-                var cliente = new Cliente();
-                cliente.Nome = registro["nome"].ToString();
-                cliente.Id = Convert.ToInt32(registro["id"]);
-                cliente.Cpf = registro["cpf"].ToString();
-                cliente.DataNascimento = Convert.ToDateTime(registro["data_nascimento"]);
+            return query.OrderBy(x => x.Nome).ToList();
+        }
 
-                cliente.Endereco = new Endereco();
-                cliente.Endereco.Cep = registro["cep"].ToString();
-                cliente.Endereco.Numero = registro["numero"].ToString();
-                cliente.Endereco.Estado = registro["estado"].ToString();
-                cliente.Endereco.Cidade = registro["cidade"].ToString();
-                cliente.Endereco.Bairro = registro["bairro"].ToString();
-                cliente.Endereco.Logradouro = registro["logradouro"].ToString();
-                cliente.Endereco.Complemento = registro["complemento"].ToString();
-
-                clientes.Add(cliente);
-            }
-            return clientes;
+        public Cliente? ObterPorId(int id)
+        {
+            var cliente = _dbset.FirstOrDefault(x => x.Id == id);
+            return cliente;
         }
     }
 }

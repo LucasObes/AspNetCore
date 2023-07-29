@@ -3,15 +3,14 @@ using LojaRepositorios.Repositorios;
 
 namespace LojaServicos.Servicos
 {
-    public class ProdutoServico
+    public class ProdutoServico : IProdutoServico
     {
-        private readonly ProdutoRepositorio _produtoRepositorio;
+        private readonly IProdutoRepositorio _produtoRepositorio;
 
         // Método construtor
-        public ProdutoServico()
+        public ProdutoServico(IProdutoRepositorio produtoRepositorio)
         {
-            // Instanciando o objeto de ProdutoRepositorio
-            _produtoRepositorio = new ProdutoRepositorio();
+            _produtoRepositorio = produtoRepositorio;
         }
 
         // CRUD
@@ -36,7 +35,7 @@ namespace LojaServicos.Servicos
             _produtoRepositorio.Apagar(id);
         }
 
-        public Produto ObterPorId(int id)
+        public Produto? ObterPorId(int id)
         {
             var produto = _produtoRepositorio.ObterPorId(id);
             return produto;
