@@ -12,7 +12,7 @@ namespace LojaRepositorios.DataBase
         public SqlCommand Conectar()
         {
             var conexao = new SqlConnection();
-            conexao.ConnectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\73368\source\repos\AspNetCore\Repositorios\DataBase\WindowsFormsBancoDados.mdf;Integrated Security=True";
+            conexao.ConnectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""E:\Program Files(x86)\Microsoft Visual Studio\Projetos\proway-curso-c-sharp\WindowsFormsExemplos\BancoDados\WindowsFormsBancoDados.mdf"";Integrated Security=True";
             conexao.Open();
 
             var comando = conexao.CreateCommand();
