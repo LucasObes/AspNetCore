@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-var connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\73368\Source\Repos\proway-curso-c-sharp\WindowsFormsExemplos\BancoDados\WindowsFormsBancoDados.mdf;Integrated Security=True";
+var connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\73368\source\repos\AspNetCore\Repositorios\DataBase\WindowsFormsBancoDados.mdf;Integrated Security=True";
 builder.Services.AddDbContext<LojaContexto>(options => options.UseSqlServer(connectionString));
 
 // Adicionar as classes concretas com suas interfaces na injeção de dependência (interface, dependencia)

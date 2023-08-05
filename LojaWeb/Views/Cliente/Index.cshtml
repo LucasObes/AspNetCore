@@ -1,11 +1,13 @@
-﻿<h1>Lista de Clientes</h1>
+﻿@model ClienteIndexViewModel
+
+<h1>Lista de Clientes</h1>
 <a class="btn btn-primary mb-2" href="/cliente/cadastrar">Cadastrar</a>
 
 <form action="/cliente" method="get">
 	<div class="row">
 		<div class="col">
 			<label class="form-label" for="campo-pesquisa">Pesquisa</label>
-			<input type="text" name="pesquisa" id="campo-pesquisa" value="@ViewBag.Pesquisa" />
+			<input type="text" name="pesquisa" id="campo-pesquisa" value="@Model.Pesquisa" />
 		</div>
 	</div>
 </form>
@@ -16,20 +18,18 @@
 			<th>Código</th>
 			<th>Nome</th>
 			<th>CPF</th>
-			<th>Data de Nascimento</th>
 			<th>Endereço</th>
 			<th>Ação</th>
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var cliente in ViewBag.Clientes)
+		@foreach (var cliente in Model.Clientes)
 		{
 			<tr>
 				<td>@cliente.Id</td>
 				<td>@cliente.Nome</td>
 				<td>@cliente.Cpf</td>
-				<td>@cliente.DataNascimento</td>
-				<td>@cliente.Endereco.Cidade - @cliente.Endereco.Estado -  @cliente.Endereco.Cep</td>
+				<td>@cliente.Endereco</td>
 				<td>
 					<a class="btn btn-outline-primary" href="/cliente/editar?id=@cliente.Id">
 						<i class="fa-regular fa-pen-to-square"></i>

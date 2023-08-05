@@ -1,5 +1,6 @@
 ﻿using LojaRepositorios.Entidades;
 using LojaRepositorios.Repositorios;
+using LojaServicos.Dtos.Clientes;
 
 namespace LojaServicos.Servicos
 {
@@ -12,15 +13,70 @@ namespace LojaServicos.Servicos
             _clienteRepositorio = clienteRepositorio;
         }
 
-        public void Cadastrar(Cliente cliente)
+        public void Cadastrar(ClienteCadastrarDto dto)
         {
+            var cliente = ConstruirCliente(dto);
+
             _clienteRepositorio.Cadastrar(cliente);
         }
 
-        public List<Cliente> ObterTodos(string pesquisa)
+        public List<ClienteIndexDto> ObterTodos(string pesquisa)
         {
             var clientes = _clienteRepositorio.ObterTodos(pesquisa);
-            return clientes;
+
+            var clientesDto = ConstruirClientesDto(clientes);
+
+            return clientesDto;
+        }
+
+        private List<ClienteIndexDto> ConstruirClientesDto(List<Cliente> clientes)
+        {
+            var dtos = new List<ClienteIndexDto>();
+
+            foreach (var cliente in clientes)
+            {
+                var dto = new ClienteIndexDto
+                {
+                    Id = cliente.Id,
+                    Nome = cliente.Nome,
+                    Endereco = $"{cliente.Endereco.Estado} - {cliente.Endereco.Cidade}",
+                    Cpf = cliente.Cpf
+                };
+                dtos.Add(dto);
+            }
+            
+            return dtos;
+        }
+
+        /* Página web recebe da Aplicação por meio da ViewModel
+           Aplicação recebe do Serviço por meio de um Dto
+           Serviço recebe do Repositório por meio de uma Entidade(Cliente) 
+
+           Repositório devolte as Entidades
+           Serviço retorna para a aplicação as Dtos
+           Aplicação devolve para a Página Web as View Models
+
+           Página Web não pode utilizar NUNCA as entidades, deve-se seguir esse padrão */
+
+        private Cliente ConstruirCliente(ClienteCadastrarDto dto)
+        {
+            return new Cliente
+            {
+                Nome = dto.Nome,
+                Cpf = dto.Cpf,
+                DataNascimento = dto.DataNascimento,
+
+                Endereco = new Endereco
+                {
+                    Estado = dto.Estado,
+                    Cidade = dto.Cidade,
+                    Bairro = dto.Bairro,
+                    Cep = dto.Cep,
+                    Logradouro = dto.Logradouro,
+                    Numero = dto.Numero,
+                    Complemento = dto.Complemento
+                }
+            };
         }
 
         public void Apagar(int id)
