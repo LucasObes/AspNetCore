@@ -79,6 +79,59 @@ namespace LojaWebTest.UnitTests.LojaServicos.Servicos
             clienteRepositorio.DidNotReceive().Cadastrar(Arg.Any<Cliente>());
         }
 
+        [Fact]
+        public void Test_ObterTodos_Sucesso()
+        {
+            // Arrange
+            var clienteRepositorio = Substitute.For<IClienteRepositorio>();
+
+            var clienteServico = new ClienteServico(clienteRepositorio);
+
+            var clientesEsperados = new List<Cliente>
+            {
+                new Cliente
+                {
+                    Nome = "Pedro",
+                    Id = 8001,
+                    Cpf = "123.456.789-10",
+                    Endereco = new Endereco
+                    {
+                        Estado = "SC",
+                        Cidade = "Timbó"
+                    }
+                },
+                new Cliente
+                {
+                    Nome = "Julia",
+                    Id = 8002,
+                    Cpf = "234.567.890-10",
+                    Endereco = new Endereco
+                    {
+                        Estado = "SC",
+                        Cidade = "Blumenau"
+                    }
+                }
+            };
+
+            clienteRepositorio.ObterTodos(Arg.Is("")).Returns(clientesEsperados);
+
+            // Act
+            var clientes = clienteServico.ObterTodos("");
+
+            // Assert
+            Assert.Equal(2, clientes.Count);
+
+            Assert.Equal("Pedro", clientes[0].Nome);
+            Assert.Equal("123.456.789-10", clientes[0].Cpf);
+            Assert.Equal(8001, clientes[0].Id);
+            Assert.Equal("SC - Timbó", clientes[0].Endereco);
+
+            Assert.Equal("Julia", clientes[1].Nome);
+            Assert.Equal("234.567.890-10", clientes[1].Cpf);
+            Assert.Equal(8002, clientes[1].Id);
+            Assert.Equal("SC - Blumenau", clientes[1].Endereco);
+        }
+
         public bool RecebeuClienteEsperado(Cliente cliente)
         {
             Assert.Equal("Julio", cliente.Nome);
