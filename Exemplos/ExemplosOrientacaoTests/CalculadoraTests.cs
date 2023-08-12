@@ -14,6 +14,7 @@ namespace ExemplosOrientacaoTests
         public void TestSomaNumero8000Mais1()
         {
             // Arrange: preparar o que é necessário para a execução do ato do teste
+            // Instanciei o hp com o new Calculadora()
             var hp = new Calculadora();
 
             // Act: chamar o método Somar passando dois números

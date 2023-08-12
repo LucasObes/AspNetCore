@@ -5,6 +5,10 @@ namespace LojaRepositorios.DataBase
 {
     public class LojaContexto : DbContext
     {
+        public LojaContexto()
+        {
+            
+        }
         public LojaContexto(DbContextOptions options) : base(options)
         {
         }

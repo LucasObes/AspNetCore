@@ -23,17 +23,17 @@ namespace LojaRepositorios.Repositorios
             _lojaContexto.SaveChanges();
         }
 
-        public void Editar (Cliente cliente)
+        public void Editar(Cliente cliente)
         {
             _dbset.Update(cliente);
             _lojaContexto.SaveChanges();
         }
 
-        public void Apagar (int id)
+        public void Apagar(int id)
         {
             var cliente = _dbset.FirstOrDefault(x => x.Id == id);
 
-            if(cliente == null)
+            if (cliente == null)
             {
                 throw new Exception($"O cliente com código {id} que deseja excluir não existe");
             }
@@ -46,21 +46,27 @@ namespace LojaRepositorios.Repositorios
         public List<Cliente> ObterTodos(string? pesquisa)
         {
             var query = _dbset.AsQueryable();
-            
-            if(pesquisa != null && pesquisa.Trim() != "")
+
+            if (pesquisa != null && pesquisa.Trim() != "")
             {
                 query = query.Where(
                 x => x.Nome.Contains(pesquisa) ||
                 x.Cpf.Replace("-", "").Replace(".", "") == pesquisa.ObterCpfLimpo());
-			}
+            }
 
             return query.OrderBy(x => x.Nome).ToList();
         }
 
-        public Cliente? ObterPorId(int id)
-        {
-            var cliente = _dbset.FirstOrDefault(x => x.Id == id);
-            return cliente;
-        }
+        // Expression Method: método de uma linha apenas, usado quando só for de uma linha.
+        public Cliente? ObterPorId(int id) =>
+            _dbset.FirstOrDefault(x => x.Id == id);
+
+        // Expression Method: método de uma linha apenas, usado quando só for de uma linha.
+        public Cliente? ObterPorCpf(string cpf) => 
+            // FirstOrDefault pode sofrer overcharge nesse caso
+            _dbset.FirstOrDefault(x => x.Cpf == cpf);
+
+        public bool ExisteComCpf(string cpf) =>
+            _dbset.Any(x => x.Cpf == cpf);
     }
 }

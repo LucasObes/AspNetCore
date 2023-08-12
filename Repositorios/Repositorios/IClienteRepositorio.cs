@@ -9,5 +9,7 @@ namespace LojaRepositorios.Repositorios
         void Editar(Cliente cliente);
         Cliente? ObterPorId(int id);
         List<Cliente> ObterTodos(string? pesquisa);
+        Cliente? ObterPorCpf(string cpf);
+        bool ExisteComCpf(string cpf);
     }
 }
