@@ -18,6 +18,7 @@ namespace LojaServicos.Servicos
             var cliente = ConstruirCliente(dto);
 
             var clienteExistenteComCpf = _clienteRepositorio.ObterPorCpf(dto.Cpf);
+
             if(clienteExistenteComCpf != null)
                 throw new Exception($"Cliente já cadastrado com CPF: {dto.Cpf}");
             // Esse teste NÃO permite que o ClienteServiço chame o método Cadastrar do _clienteRepositorio 
@@ -34,21 +35,16 @@ namespace LojaServicos.Servicos
             return clientesDto;
         }
 
+        // Com Linq
+        /* private List<ClienteIndexDto> ConstruirClientesDeto(List<Cliente> cliente) =>
+                clientes.Select(x => ClienteIndexDto.ConstruirComEntidade(x)).ToList(); */
+
         private List<ClienteIndexDto> ConstruirClientesDto(List<Cliente> clientes)
         {
             var dtos = new List<ClienteIndexDto>();
 
             foreach (var cliente in clientes)
-            {
-                var dto = new ClienteIndexDto
-                {
-                    Id = cliente.Id,
-                    Nome = cliente.Nome,
-                    Endereco = $"{cliente.Endereco.Estado} - {cliente.Endereco.Cidade}",
-                    Cpf = cliente.Cpf
-                };
-                dtos.Add(dto);
-            }
+                dtos.Add(ClienteIndexDto.ConstruirComEntidade(cliente));
             
             return dtos;
         }
